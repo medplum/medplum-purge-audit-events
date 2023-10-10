@@ -5,6 +5,7 @@
   "main": "src/main.cjs",
   "scripts": {
     "purge": "node src/main.cjs",
+    "count": "node src/count.cjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Medplum <hello@medplum.com>",
