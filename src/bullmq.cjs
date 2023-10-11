@@ -1,6 +1,9 @@
 const { loadConfig } = require('./config.cjs');
 const { Queue } = require('bullmq');
 
+const batchSize = 100000;
+const iterations = 10;
+
 async function main(args) {
   const configName = args.length > 0 ? args[0] : 'file:medplum.config.json';
   const config = await loadConfig(configName);
@@ -17,13 +20,15 @@ async function main(args) {
     console.log(status, count);
   }
 
-  // Delete a batch of completed jobs
-  // See: https://docs.bullmq.io/guide/queues/removing-jobs#clean
-  const deletedJobIds = await queue.clean(
-    60000, // 1 minute
-    1000 // max number of jobs to clean
-  );
-  console.log('Deleted count', deletedJobIds.length);
+  for (let i = 0; i < iterations; i++) {
+    // Delete a batch of completed jobs
+    // See: https://docs.bullmq.io/guide/queues/removing-jobs#clean
+    const deletedJobIds = await queue.clean(
+      60000, // 1 minute
+      batchSize // max number of jobs to clean
+    );
+    console.log('Deleted count', deletedJobIds.length);
+  }
 
   await queue.close();
 }
